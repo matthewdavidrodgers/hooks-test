@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent, act, waitForElement } from "@testing-library/react";
+import { act, render, fireEvent, waitForElement } from "@testing-library/react";
 import axios from "axios";
 import { useTypeahead } from "./hooks";
 
@@ -41,26 +41,26 @@ beforeEach(() => {
 
 test("can be called without crashing", async () => {
   await act(async () => {
-    const { unmount } = render(<TestTypeahead />);
-    await promise;
+    const { unmount, getByText } = render(<TestTypeahead />);
+    await waitForElement(() => getByText("resultOne"));
     unmount();
   });
 });
 
 test("fires on mount", async () => {
   await act(async () => {
-    const { unmount } = render(<TestTypeahead />);
-    expect(getSpy).toBeCalled();
-    await promise;
+    const { unmount, getByText } = render(<TestTypeahead />);
+    await waitForElement(() => getByText("resultTwo"));
     unmount();
   });
+  expect(getSpy).toBeCalled();
 });
 
 test("renders loading until results resolve", async () => {
   await act(async () => {
-    const { queryByText, unmount } = render(<TestTypeahead />);
+    const { getByText, queryByText, unmount } = render(<TestTypeahead />);
     expect(queryByText("loading...")).not.toBe(null);
-    await promise;
+    await waitForElement(() => getByText("resultOne"));
     expect(queryByText("loading...")).toBe(null);
     unmount();
   });
